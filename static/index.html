@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI Tutorial Forge · Screen Recording → Step-by-Step Video</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            poppins: ['Poppins', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              red: '#ef4444',
+              dark: '#020617',
+            }
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-brand-dark via-rose-900 to-black text-slate-50 flex items-center justify-center px-4 font-poppins">
+
+  <div class="max-w-4xl w-full">
+    <div class="grid md:grid-cols-[1.3fr,1fr] gap-8 items-stretch">
+      <!-- LEFT: Hero + Upload -->
+      <div class="bg-black/40 border border-rose-500/40 shadow-[0_0_40px_rgba(248,113,113,0.35)] rounded-3xl p-7 md:p-8 backdrop-blur-lg">
+        <header class="space-y-3 mb-6">
+          <div class="inline-flex items-center gap-2 rounded-full border border-rose-500/60 bg-rose-500/10 px-3 py-1 text-[11px] uppercase tracking-[0.14em] text-rose-100">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            AI-Driven Tutorial Generation
+          </div>
+
+          <h1 class="text-3xl md:text-4xl font-semibold leading-tight">
+            AI Tutorial Forge
+          </h1>
+          <p class="text-sm md:text-[15px] text-slate-200">
+            Transform raw <span class="font-semibold text-rose-300">screen recordings</span> into
+            structured, narrated tutorials. The pipeline combines computer vision, OCR, and
+            automatic voiceover to deliver clear, reusable training content.
+          </p>
+
+          <div class="flex flex-wrap gap-2 pt-1">
+            <span class="px-2.5 py-1 rounded-full bg-slate-900/80 border border-slate-700 text-[11px]">
+              Python · FastAPI backend
+            </span>
+            <span class="px-2.5 py-1 rounded-full bg-slate-900/80 border border-slate-700 text-[11px]">
+              OpenCV · OCR analysis
+            </span>
+            <span class="px-2.5 py-1 rounded-full bg-slate-900/80 border border-slate-700 text-[11px]">
+              FFmpeg · Text-to-speech
+            </span>
+          </div>
+        </header>
+
+        <!-- Upload Card -->
+        <div class="space-y-5">
+          <label class="block">
+            <span class="text-xs font-medium text-slate-100 uppercase tracking-wide">Upload screen recording (.mp4)</span>
+            <div
+              class="mt-2 border-2 border-dashed border-rose-400/70 rounded-2xl px-4 py-6 flex flex-col items-center justify-center gap-3 bg-black/40 hover:bg-black/60 transition group cursor-pointer"
+              onclick="document.getElementById('fileInput').click()"
+            >
+              <div class="flex items-center justify-center w-12 h-12 rounded-2xl bg-rose-500/20 border border-rose-400/70">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-rose-200" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M12 4v12m0 0l-3.5-3.5M12 16l3.5-3.5M5 19h14" />
+                </svg>
+              </div>
+
+              <div class="text-center space-y-1">
+                <p class="text-sm">
+                  <span class="font-medium text-slate-50">Click to choose a file</span>
+                  <span class="text-slate-300"> or drag &amp; drop</span>
+                </p>
+                <p class="text-[11px] text-slate-400">
+                  Short clips (10–60 seconds) are ideal for a quick preview of the workflow.
+                </p>
+              </div>
+
+              <input id="fileInput" type="file" accept="video/mp4" class="hidden" />
+            </div>
+          </label>
+
+          <p id="fileName" class="text-xs text-slate-300 hidden"></p>
+
+          <button id="uploadBtn" type="button"
+            class="w-full inline-flex justify-center items-center gap-2 px-4 py-2.5 rounded-2xl bg-rose-500 hover:bg-rose-400 disabled:bg-slate-700 disabled:text-slate-400 text-sm font-medium transition shadow-lg shadow-rose-500/25">
+            <span id="uploadBtnText">Generate Tutorial Video</span>
+            <span id="uploadSpinner" class="hidden">
+              <svg class="animate-spin h-4 w-4 text-slate-50" xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
+                <path class="opacity-75" fill="currentColor"
+                  d="M4 12a8 8 0 018-8v3a5 5 0 00-5 5H4z">
+                </path>
+              </svg>
+            </span>
+          </button>
+
+          <div id="status" class="text-xs text-slate-200 min-h-[1.25rem]"></div>
+
+          <div id="resultSection" class="mt-3 space-y-3 hidden">
+            <div class="flex items-center justify-between gap-2">
+              <p class="text-sm text-slate-50 font-medium">Tutorial video generated</p>
+              <a id="downloadLink" href="#" download="tutorial_output.mp4"
+                class="text-xs px-3 py-1.5 rounded-xl bg-emerald-400 hover:bg-emerald-300 text-emerald-950 font-semibold transition shadow shadow-emerald-400/40">
+                Download MP4
+              </a>
+            </div>
+            <div class="relative rounded-2xl overflow-hidden border border-slate-700/80 bg-black/60">
+              <div class="absolute inset-x-0 top-0 h-8 bg-gradient-to-r from-rose-500/70 via-fuchsia-500/70 to-amber-400/80 flex items-center px-3 gap-2 text-[11px]">
+                <span class="w-2 h-2 rounded-full bg-emerald-300"></span>
+                <span class="uppercase tracking-[0.2em] text-slate-50/90">Preview</span>
+              </div>
+              <div class="pt-8">
+                <video id="previewVideo" class="w-full h-64 md:h-60 rounded-b-2xl" controls></video>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Pipeline / Explanation -->
+      <aside class="space-y-4 md:space-y-5">
+        <div class="bg-black/50 border border-slate-700/70 rounded-3xl p-5 md:p-6 backdrop-blur">
+          <h2 class="text-sm font-semibold text-slate-50 tracking-wide uppercase mb-2">
+            How the pipeline works
+          </h2>
+          <ol class="space-y-2.5 text-xs text-slate-200">
+            <li class="flex gap-3">
+              <span class="flex-shrink-0 w-5 h-5 rounded-full bg-rose-500 text-[11px] flex items-center justify-center font-semibold">
+                1
+              </span>
+              <span>The video is processed frame-by-frame using <span class="font-semibold">OpenCV</span> and <span class="font-semibold">FFmpeg</span>.</span>
+            </li>
+            <li class="flex gap-3">
+              <span class="flex-shrink-0 w-5 h-5 rounded-full bg-rose-500 text-[11px] flex items-center justify-center font-semibold">
+                2
+              </span>
+              <span><span class="font-semibold">OCR</span> extracts on-screen text to identify key actions and UI changes.</span>
+            </li>
+            <li class="flex gap-3">
+              <span class="flex-shrink-0 w-5 h-5 rounded-full bg-rose-500 text-[11px] flex items-center justify-center font-semibold">
+                3
+              </span>
+              <span>The recording is segmented into logical steps and converted into clear, human-readable instructions.</span>
+            </li>
+            <li class="flex gap-3">
+              <span class="flex-shrink-0 w-5 h-5 rounded-full bg-rose-500 text-[11px] flex items-center justify-center font-semibold">
+                4
+              </span>
+              <span>A text-to-speech engine generates narration aligned with the detected steps.</span>
+            </li>
+            <li class="flex gap-3">
+              <span class="flex-shrink-0 w-5 h-5 rounded-full bg-rose-500 text-[11px] flex items-center justify-center font-semibold">
+                5
+              </span>
+              <span><span class="font-semibold">FFmpeg</span> rebuilds the final tutorial video with the original visuals and the generated voiceover.</span>
+            </li>
+          </ol>
+        </div>
+
+        <div class="bg-black/50 border border-slate-700/70 rounded-3xl p-5 md:p-6 backdrop-blur space-y-3">
+          <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-200">
+            Designed for training and product walkthroughs
+          </h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            This interface demonstrates an automated approach to converting product flows and internal workflows
+            into repeatable, narrated guides. It’s ideal for onboarding, customer education, feature launches,
+            and internal process documentation.
+          </p>
+          <div class="flex flex-wrap gap-2 text-[10px]">
+            <span class="px-2 py-1 rounded-full bg-slate-900/80 border border-slate-700">Screen recording inputs</span>
+            <span class="px-2 py-1 rounded-full bg-slate-900/80 border border-slate-700">AI-assisted step detection</span>
+            <span class="px-2 py-1 rounded-full bg-slate-900/80 border border-slate-700">Narrated video output</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById("fileInput");
+    const uploadBtn = document.getElementById("uploadBtn");
+    const uploadBtnText = document.getElementById("uploadBtnText");
+    const uploadSpinner = document.getElementById("uploadSpinner");
+    const fileName = document.getElementById("fileName");
+    const statusEl = document.getElementById("status");
+    const resultSection = document.getElementById("resultSection");
+    const previewVideo = document.getElementById("previewVideo");
+    const downloadLink = document.getElementById("downloadLink");
+
+    let selectedFile = null;
+
+    fileInput.addEventListener("change", (e) => {
+      selectedFile = e.target.files[0] || null;
+      if (selectedFile) {
+        fileName.textContent = `Selected: ${selectedFile.name} (${Math.round(selectedFile.size / 1024 / 1024)} MB)`;
+        fileName.classList.remove("hidden");
+      } else {
+        fileName.classList.add("hidden");
+      }
+    });
+
+    async function uploadVideo() {
+      if (!selectedFile) {
+        statusEl.textContent = "Please choose an .mp4 file first.";
+        statusEl.className = "text-xs text-amber-200 min-h-[1.25rem]";
+        return;
+      }
+
+      uploadBtn.disabled = true;
+      uploadBtnText.textContent = "Processing...";
+      uploadSpinner.classList.remove("hidden");
+      statusEl.textContent = "Processing the recording and generating a tutorial video...";
+      statusEl.className = "text-xs text-slate-100 min-h-[1.25rem]";
+      resultSection.classList.add("hidden");
+
+      try {
+        const formData = new FormData();
+        formData.append("file", selectedFile);
+
+        const response = await fetch("/process", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const text = await response.text();
+          throw new Error(text || "Server error");
+        }
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+
+        previewVideo.src = url;
+        downloadLink.href = url;
+
+        resultSection.classList.remove("hidden");
+        statusEl.textContent = "Tutorial video generated successfully.";
+        statusEl.className = "text-xs text-emerald-300 min-h-[1.25rem]";
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = "Error: " + err.message;
+        statusEl.className = "text-xs text-red-300 min-h-[1.25rem]";
+      } finally {
+        uploadBtn.disabled = false;
+        uploadBtnText.textContent = "Generate Tutorial Video";
+        uploadSpinner.classList.add("hidden");
+      }
+    }
+
+    uploadBtn.addEventListener("click", uploadVideo);
+  </script>
+</body>
+</html>
